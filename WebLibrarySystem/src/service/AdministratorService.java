@@ -151,8 +151,7 @@ public class AdministratorService {
 		Connection c = ConnectionUtil.getConnection();
 		try {
 			BookCopiesDAO cdao = new BookCopiesDAO(c);
-			cdao.update(copies);
-			;
+			cdao.create(copies);
 			c.commit();
 			System.out.println("Copies were added!");
 		} catch (Exception e) {

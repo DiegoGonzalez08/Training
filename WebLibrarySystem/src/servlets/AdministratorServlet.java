@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -9,6 +10,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import service.AdministratorService;
 import entity.Author;
@@ -24,7 +27,7 @@ import entity.Publisher;
 @WebServlet({ "/addAuthor", "/deleteAuthor", "/addPublisher", "/deletePublisher", 
 	"/addBranch", "/deleteBranch", "/addBorrower", "/deleteBorrower", "/addGenre", 
 	"/deleteGenre", "/addBook", "/deleteBook", "/editAuthor", "/editPublisher",
-	"/editGenre", "/editBorrower", "/editBranch", "/editBook"})
+	"/editGenre", "/editBorrower", "/editBranch", "/editBook", "/getAllAuthors"})
 public class AdministratorServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -130,10 +133,43 @@ public class AdministratorServlet extends HttpServlet {
 			editBook(request, response);
 			break;
 		}
+		case "/getAllAuthors" : {
+			getAllAuthors(request, response);
+			break;
+		}
+		case "/getAllPublishers" : {
+			getAllPublishers(request, response);
+			break;
+		}
 		default:
 			break;
 		}
 
+	}	
+	
+	private void getAllPublishers(HttpServletRequest request,
+			HttpServletResponse response) {
+		try {
+			List<Publisher> publishers = new AdministratorService().getAllPublishers();
+			ObjectMapper om = new ObjectMapper();
+			om.writeValue(response.getWriter(), publishers);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	private void getAllAuthors(HttpServletRequest request,
+			HttpServletResponse response) {
+		try {
+			List<Author> authors = new AdministratorService().getAllAuthors();
+			ObjectMapper om = new ObjectMapper();
+			om.writeValue(response.getWriter(), authors);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void editBook(HttpServletRequest request,
@@ -490,7 +526,7 @@ public class AdministratorServlet extends HttpServlet {
 		author.setAuthorName(authorName);
 
 		RequestDispatcher rd = getServletContext().getRequestDispatcher(
-				"/authors.jsp");
+				"/listAuthors.jsp");
 		try {
 			new AdministratorService().addAuthor(author);
 

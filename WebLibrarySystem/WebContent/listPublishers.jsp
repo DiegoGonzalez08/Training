@@ -1,11 +1,3 @@
-<%@page import="entity.Publisher"%>
-<%@page import="java.util.List"%>
-<%@page import="service.AdministratorService"%>
-<%
-
-	List<Publisher> publishers = new AdministratorService().getAllPublishers();
-
-%>
 <%@include file="index.jsp"%>
 <script>
 	
@@ -38,7 +30,8 @@
 
 <div style="margin-top:80px;margin-left:10px;">
 <section>
-<table class="table">
+${result}<br/> 
+<table class="table" id="publisherTable">
 	<tr>
 		<td>Publisher Id</td>
 		<td>Publisher Name</td>
@@ -47,17 +40,26 @@
 		<td>Edit</td>
 		<td>Delete</td>
 	</tr>
-	<%for(Publisher p : publishers) { %>	
-	<tr>
-		<td><%=p.getPublisherId()%></td>
-		<td><%=p.getPublisherName()%></td>
-		<td><%=p.getPublisherAddress()%></td>
-		<td><%=p.getPublisherPhone()%></td>
-		<td><button class="btn btn-success"onClick="javascript:modal(<%=p.getPublisherId()%>)">Edit</button></td>
-		<td><button class="btn btn-danger" onclick="javascript:deletePublisher(<%=p.getPublisherId()%>);">Delete</button></td>
-	</tr>
-	<% } %>
 </table>
+
+<script>
+	$(document).ready(function() {
+		$.ajax({
+			url : 'getAllPublishers',
+			dataType: 'json',
+		    success: function (data) { 
+		    	$.each(data, function(index, element) {
+	            	$('#publisherTable').append(
+	            			"<tr><td>"+element.publisherId+"</td><td>"+element.publisherName+"</td>"+
+	            			"<tr><td>"+element.publisherAddress+"</td><td>"+element.publisherPhone+"</td>"+
+	            			"<td><button class='btn btn-success' onclick='javascript:editPublisher("+element.publisherId+")'>Edit</button></td>"+
+	            			"<td><button class='btn btn-danger' onclick='javascript:deletePublisher("+element.publisherId+");'>Delete</button></td></tr>");
+	        	});
+			}
+		});
+	});
+</script>
+
 <form action="deletePublisher" method="post" name="deleteFrm">
 	<input type="hidden" name="publisherId" id="publisherId"/>
 </form>
